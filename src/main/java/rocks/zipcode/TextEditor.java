@@ -1,5 +1,9 @@
 package rocks.zipcode;
 
+import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -7,7 +11,7 @@ import java.util.*;
 
 //TextEditor class starts here
 class TextEditor extends Frame implements ActionListener {
-    TextArea ta = new TextArea();
+    JTextArea ta = new JTextArea();
     int i, len1, len, pos1;
     String str = "", s3 = "", s2 = "", s4 = "", s32 = "", s6 = "", s7 = "", s8 = "", s9 = "";
     String months[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
@@ -60,6 +64,8 @@ class TextEditor extends Frame implements ActionListener {
         }
         MyWindowsAdapter mw = new MyWindowsAdapter(this);
         addWindowListener(mw);
+        CheckBoxItemListener cbil = new CheckBoxItemListener(this);
+        chkb.addItemListener(cbil);
         setSize(500, 500);
         setTitle("untitled notepad");
         setVisible(true);
@@ -94,6 +100,35 @@ class TextEditor extends Frame implements ActionListener {
         } catch (IOException e) {
         }
         try {
+            if (arg.equals("Save")) {
+                String fileName = null;
+                if(!s9.equals("")){
+                    // save as file
+                    fileName = s9;
+                }
+                else if(!s32.equals("")){
+                    fileName = s32;
+                }
+
+                if(fileName == null){
+                    arg = "Save As";
+                }
+                else {
+                    s6 = ta.getText();
+                    len1 = s6.length();
+                    byte buf[] = s6.getBytes();
+
+                    File f = new File(fileName);
+                    FileOutputStream fobj = new FileOutputStream(f);
+                    for (int k = 0; k < len1; k++) {
+                        fobj.write(buf[k]);
+                    }
+                    fobj.close();
+                }
+            }
+        } catch (IOException e) {
+        }
+        try {
             if (arg.equals("Save As")) {
                 FileDialog dialog1 = new FileDialog(this, "Save As", FileDialog.SAVE);
                 dialog1.setVisible(true);
@@ -119,7 +154,7 @@ class TextEditor extends Frame implements ActionListener {
         if (arg.equals("Cut")) {
             str = ta.getSelectedText();
             i = ta.getText().indexOf(str);
-            ta.replaceRange(" ", i, i + str.length());
+            ta.replaceRange("", i, i + str.length());
         }
         if (arg.equals("Copy")) {
             str = ta.getSelectedText();
@@ -131,8 +166,8 @@ class TextEditor extends Frame implements ActionListener {
         if (arg.equals("Delete")) {
             String msg = ta.getSelectedText();
             i = ta.getText().indexOf(msg);
-            ta.replaceRange(" ", i, i + msg.length());
-            msg = "";
+            ta.replaceRange("", i, i + msg.length());
+//            msg = "";
         }
         if (arg.equals("Select All")) {
             String strText = ta.getText();
@@ -156,11 +191,58 @@ class TextEditor extends Frame implements ActionListener {
             d1.setVisible(true);
             setSize(500, 500);
         }
+        if(arg.equals("Find")){
+            String stringToFind = JOptionPane.showInputDialog(null, "What would you like to find?", "Find", JOptionPane.INFORMATION_MESSAGE);
+            // i'll get to you one day
+//            Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter( Color.cyan );
+
+            int offset = ta.getText().indexOf(stringToFind);
+            int length = stringToFind.length();
+            ta.select(offset, offset + length);
+        }
+        if(arg.equals("Find Next")){
+            String stringToFind = JOptionPane.showInputDialog(null, "What would you like to find next occurrence of?", "Find Next", JOptionPane.INFORMATION_MESSAGE);
+            int loc = ta.getCaretPosition();
+            int offset = ta.getText().indexOf(stringToFind, loc);
+            ta.select(offset, offset + stringToFind.length());
+        }
+        if(arg.equals("Replace")) {
+            JTextField stringToFind = new JTextField();
+            JTextField stringToReplaceWith = new JTextField();
+            Object[] message = {
+                    "Find:", stringToFind,
+                    "Replace:", stringToReplaceWith};
+
+            int option = JOptionPane.showConfirmDialog(null, message, "Find and Replace", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION){
+                int offset = ta.getText().indexOf(stringToFind.getText());
+                ta.replaceRange(stringToReplaceWith.getText(), offset, offset + stringToFind.getText().length());
+                ta.setCaretPosition(offset + stringToReplaceWith.getText().length());
+            }
+        }
+        if(arg.equals("Help Topics")){
+
+        }
+        if(arg.equals("Word Wrap")){
+            ta.setLineWrap(chkb.getState());
+            ta.setWrapStyleWord(chkb.getState());
+        }
     }
     public static void main(String args[]) {
         TextEditor to = new TextEditor();
     }
+}
 
+class CheckBoxItemListener implements ItemListener {
+    TextEditor tt;
+
+    public CheckBoxItemListener(TextEditor ttt) {
+        tt = ttt;
+    }
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        tt.actionPerformed(new ActionEvent(tt, 0, "Word Wrap"));
+    }
 }
 
 class MyWindowsAdapter extends WindowAdapter {
@@ -171,15 +253,41 @@ class MyWindowsAdapter extends WindowAdapter {
     }
 
     public void windowClosing(WindowEvent we) {
+        if(!tt.ta.getText().isEmpty()) {
+            tt.actionPerformed(new ActionEvent(tt, 0, "Save"));
+        }
         tt.dispose();
     }
 }
 
+class AboutWindowsAdapter extends WindowAdapter {
+    AboutDialog ad;
+
+    public AboutWindowsAdapter(AboutDialog add) {
+        ad = add;
+    }
+
+    public void windowClosing(WindowEvent we) {
+        ad.dispose();
+    }
+}
+
 class AboutDialog extends Dialog implements ActionListener {
+    String about_msg = "Welcome to TextEditor!\n\n" +
+            "Developed by a bunch of talented cats who are passionate about destroying things.";
+    JTextArea jta = new JTextArea(about_msg);
+
     AboutDialog(Frame parent, String title) {
         super(parent, title, false);
         this.setResizable(false);
         setLayout(new FlowLayout(FlowLayout.LEFT));
+        addWindowListener(new AboutWindowsAdapter(this));
+        jta.setBackground(getBackground());
+        jta.setEditable(false);
+        jta.setLineWrap(true);
+        jta.setWrapStyleWord(true);
+        add(jta);
+        jta.setSize(500, 300);
         setSize(500, 300);
     }
 

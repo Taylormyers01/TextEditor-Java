@@ -1,8 +1,6 @@
 package rocks.zipcode;
 
 import javax.swing.*;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -15,7 +13,7 @@ class TextEditor extends Frame implements ActionListener {
     String str = "", s3 = "", s2 = "", s4 = "", s32 = "", s6 = "", s7 = "", s8 = "", s9 = "";
     String months[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
             "October", "November", "December" };
-    CheckboxMenuItem chkb = new CheckboxMenuItem("Word Wrap");
+    CheckboxMenuItem chkb = new CheckboxMenuItem("Word Wrap", true);
 
     public TextEditor() {
         MenuBar mb = new MenuBar();
@@ -61,12 +59,17 @@ class TextEditor extends Frame implements ActionListener {
             m4.add(mi4[i]);
             mi4[i].addActionListener(this);
         }
+
         MyWindowsAdapter mw = new MyWindowsAdapter(this);
         addWindowListener(mw);
+
+        CheckBoxItemListener cbil = new CheckBoxItemListener(this);
+        chkb.addItemListener(cbil);
+        actionPerformed(new ActionEvent(this, 0, "Word Wrap"));
+
         setSize(500, 500);
         setTitle("untitled notepad");
         setVisible(true);
-
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -98,31 +101,6 @@ class TextEditor extends Frame implements ActionListener {
         } catch (IOException e) {
         }
         try {
-            if (arg.equals("Save")) {
-                String fileName = null;
-                if(s9 != ""){
-                    fileName = s9;
-                }else if(s32 != ""){
-                    fileName = s32;
-                }
-                if(fileName == null){
-                    arg = "Save As";
-                }else{
-                    s6 = ta.getText();
-                    len1 = s6.length();
-                    byte buf[] = s6.getBytes();
-                    File f1 = new File(fileName);
-                    FileOutputStream fobj1 = new FileOutputStream(f1);
-                    for (int k = 0; k < len1; k++) {
-                        fobj1.write(buf[k]);
-                    }
-                    fobj1.close();
-                }
-            }
-            this.setTitle(s8 + " TextEditor File");
-        } catch (IOException e) {
-        }
-        try {
             if (arg.equals("Save As")) {
                 FileDialog dialog1 = new FileDialog(this, "Save As", FileDialog.SAVE);
                 dialog1.setVisible(true);
@@ -148,7 +126,7 @@ class TextEditor extends Frame implements ActionListener {
         if (arg.equals("Cut")) {
             str = ta.getSelectedText();
             i = ta.getText().indexOf(str);
-            ta.replaceRange("", i, i + str.length()); // changed from " " to ""
+            ta.replaceRange("", i, i + str.length());
         }
         if (arg.equals("Copy")) {
             str = ta.getSelectedText();
@@ -160,8 +138,8 @@ class TextEditor extends Frame implements ActionListener {
         if (arg.equals("Delete")) {
             String msg = ta.getSelectedText();
             i = ta.getText().indexOf(msg);
-            ta.replaceRange("", i, i + msg.length()); //changed " " to ""
-            //msg = ""; // redundunt clearing of msg
+            ta.replaceRange("", i, i + msg.length());
+//            msg = "";
         }
         if (arg.equals("Select All")) {
             String strText = ta.getText();
@@ -181,53 +159,73 @@ class TextEditor extends Frame implements ActionListener {
             ta.insert(hms, loc);
         }
         if (arg.equals("About TextEditor")) {
-            AboutDialog d1 = new AboutDialog(this, "About TextEditor"); // this aint working bruh
+            AboutDialog d1 = new AboutDialog(this, "About TextEditor", true);
             d1.setVisible(true);
             setSize(500, 500);
         }
-        if (arg.equals("Find")){
-            String toFind = JOptionPane.showInputDialog(null, "Find","Find",JOptionPane.INFORMATION_MESSAGE);
-            int offset =ta.getText().indexOf(toFind);
-            int findLength = toFind.length();
-            ta.select(offset, findLength);
+        if(arg.equals("Find")){
+            String stringToFind = JOptionPane.showInputDialog(null, "What would you like to find?", "Find", JOptionPane.INFORMATION_MESSAGE);
+            // i'll get to you one day
+//            Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter( Color.cyan );
+
+            int offset = ta.getText().indexOf(stringToFind);
+            int length = stringToFind.length();
+            ta.select(offset, offset + length);
         }
         if(arg.equals("Find Next")){
+            String stringToFind = JOptionPane.showInputDialog(null, "What would you like to find next occurrence of?", "Find Next", JOptionPane.INFORMATION_MESSAGE);
             int loc = ta.getCaretPosition();
-            String toFind = JOptionPane.showInputDialog(null, "Find","Find",JOptionPane.INFORMATION_MESSAGE);
-            int offset =ta.getText().indexOf(toFind, loc);
-            int findLength = toFind.length();
-            ta.select(offset, offset + findLength);
+            int offset = ta.getText().indexOf(stringToFind, loc);
+            ta.select(offset, offset + stringToFind.length());
         }
-        if(arg.equals("Replace")){
+        if(arg.equals("Replace")) {
             JTextField stringToFind = new JTextField();
-            JTextField stringToReplace = new JTextField();
+            JTextField stringToReplaceWith = new JTextField();
             Object[] message = {
                     "Find:", stringToFind,
-                    "Replace:", stringToReplace
-            };
+                    "Replace:", stringToReplaceWith};
 
-            int option = JOptionPane.showConfirmDialog(null, message, "Find and replace", JOptionPane.OK_CANCEL_OPTION);
-            if (option == JOptionPane.OK_OPTION) {
+            int option = JOptionPane.showConfirmDialog(null, message, "Find and Replace", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION){
                 int offset = ta.getText().indexOf(stringToFind.getText());
-                ta.replaceRange(stringToReplace.getText(), offset, offset + stringToFind.getText().length());
-                ta.setCaretPosition(offset + stringToReplace.getText().length());
+                ta.replaceRange(stringToReplaceWith.getText(), offset, offset + stringToFind.getText().length());
+                ta.setCaretPosition(offset + stringToReplaceWith.getText().length());
             }
         }
         if(arg.equals("Help Topics")){
+            AboutDialog d2 = new AboutDialog(this, "Get Help from TextEditor", false);
+            d2.setVisible(true);
+        }
+        if(arg.equals("Word Wrap")){
+            ta.setLineWrap(chkb.getState());
+            ta.setWrapStyleWord(chkb.getState());
         }
         if(arg.equals("Choose Font")){
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             Font[] fonts = ge.getAllFonts();
             String[] fontNames = Arrays.stream(fonts).map(Font::getFontName).toArray(String[]::new);
             JComboBox<String> comboBox = new JComboBox<>(fontNames);
-            JOptionPane.showMessageDialog(null, comboBox, "Select Font", JOptionPane.QUESTION_MESSAGE); //Can use PlainMessage for sadness
+            JOptionPane.showMessageDialog(null, comboBox, "Select Font", JOptionPane.QUESTION_MESSAGE);
+            // Question message shows our lil mascot dude :)
             ta.setFont(new Font((String)comboBox.getSelectedItem(), Font.PLAIN, 14));
         }
     }
+
     public static void main(String args[]) {
         TextEditor to = new TextEditor();
     }
+}
 
+class CheckBoxItemListener implements ItemListener {
+    TextEditor tt;
+
+    public CheckBoxItemListener(TextEditor ttt) {
+        tt = ttt;
+    }
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        tt.actionPerformed(new ActionEvent(tt, 0, "Word Wrap"));
+    }
 
 }
 
@@ -239,16 +237,17 @@ class MyWindowsAdapter extends WindowAdapter {
     }
 
     public void windowClosing(WindowEvent we) {
-        if(!tt.ta.getText().isEmpty())
+        if(!tt.ta.getText().isEmpty()) {
             tt.actionPerformed(new ActionEvent(tt, 0, "Save"));
+        }
         tt.dispose();
     }
 }
 
-class MyDialogAdapter extends WindowAdapter {
+class AboutWindowsAdapter extends WindowAdapter {
     AboutDialog ad;
 
-    public MyDialogAdapter(AboutDialog add) {
+    public AboutWindowsAdapter(AboutDialog add) {
         ad = add;
     }
 
@@ -256,20 +255,46 @@ class MyDialogAdapter extends WindowAdapter {
         ad.dispose();
     }
 }
-class AboutDialog extends Dialog implements ActionListener{
 
+class AboutDialog extends Dialog implements ActionListener {
+    String about_msg = "Welcome to TextEditor!\n\n" +
+            "Developed by a bunch of talented cats who are passionate about destroying things.";
+    String help_msg = "Too dumb for our program? Maybe you're new here? TextEditor is here to help!\n\n" +
+           "Most of the buttons are pretty self explanatory.\n\n" +
+            "We will save your progress when you click that red close window button...\n" +
+            "... unless you CHOOSE to cancel during \"Save As\"... then... well... you know.\n\n" +
+            "This help window will stay here as long as you need it to. But please, just play around with the features." +
+            "It's not like you have many more important things to do...";
+    JTextArea jta;
 
-    String message = "Welcome to our Text Editor\n" +
-                     "Developed by a bunch of talented cats who are passionate \nabout destroying things";
-    JTextArea jta = new JTextArea(message);
-    AboutDialog(Frame parent, String title) {
+    AboutDialog(Frame parent, String title, boolean isAbout) {
         super(parent, title, false);
         this.setResizable(false);
         setLayout(new FlowLayout(FlowLayout.LEFT));
+        addWindowListener(new AboutWindowsAdapter(this));
+        setUpTextArea(isAbout);
         setSize(500, 300);
+    }
+
+    private void setUpTextArea(boolean isAbout) {
+        if(isAbout){
+            jta = new JTextArea(about_msg);
+            this.add(jta);
+        }
+        else{
+            jta = new JTextArea(help_msg);
+            JScrollPane scrollPane = new JScrollPane(jta);
+            scrollPane.setSize(490, 500);
+            scrollPane.setVerticalScrollBar(scrollPane.createVerticalScrollBar());
+            scrollPane.setWheelScrollingEnabled(true);
+            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            this.add(scrollPane);
+        }
         jta.setBackground(getBackground());
-        add(jta);
-        addWindowListener(new MyDialogAdapter(this));
+        jta.setEditable(false);
+        jta.setLineWrap(true);
+        jta.setWrapStyleWord(true);
+        jta.setSize(490, 500);
     }
 
     public void actionPerformed(ActionEvent ae) {

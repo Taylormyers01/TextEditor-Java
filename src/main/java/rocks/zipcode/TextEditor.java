@@ -10,7 +10,7 @@ import java.io.*;
 import java.util.*;
 
 //TextEditor class starts here
-class TextEditor extends Frame implements ActionListener {
+class TextEditor extends JFrame implements ActionListener {
     JTextArea ta = new JTextArea();
     int i, len1, len, pos1;
     String str = "", s3 = "", s2 = "", s4 = "", s32 = "", s6 = "", s7 = "", s8 = "", s9 = "";
@@ -286,7 +286,7 @@ class AboutWindowsAdapter extends WindowAdapter {
     }
 }
 
-class AboutDialog extends Dialog implements ActionListener {
+class AboutDialog extends JDialog implements ActionListener {
     String about_msg = "Welcome to TextEditor!\n\n" +
             "Developed by a bunch of talented cats who are passionate about destroying things.";
     String help_msg = "Too dumb for our program? Maybe you're new here? TextEditor is here to help!\n\n" +
@@ -294,16 +294,37 @@ class AboutDialog extends Dialog implements ActionListener {
             "We will save your progress when you click that red close window button...\n" +
             "... unless you CHOOSE to cancel during \"Save As\"... then... well... you know.\n\n" +
             "This help window will stay here as long as you need it to. But please, just play around with the features." +
-            "It's not like you have many more important things to do...";
+            " It's not like you have many more important things to do...\n\n" +
+            "But if you REALLY must know, this help message will list some interesting features.\n\n\n\n\n\n\n\n\n" +
+            "\t\t\tARE YOU READY KIDS???\n\n\n" +
+            "There's the four main menus at the top: File, Edit, Tools, and Help\n\n" +
+            "File contains all the tools necessary to create a file, save a file, open your file... you get the idea\n\n" +
+            "Edit contains all the tools necessary to edit the text of the file, " +
+            "and even has a handy dandy little timestamp function\n\n" +
+            "Tools contains tools that'll help make your life fun with fonts and word wrapping!\n\n" +
+            "Help is self explanatory. Otherwise, how did you GET here???\n" +
+            "Actually, don't answer that one... I'll give you the benefit of the doubt";
     JTextArea jta;
+    JScrollPane scrollPane;
 
     AboutDialog(Frame parent, String title, boolean isAbout) {
         super(parent, title, false);
-        this.setResizable(false);
-        setLayout(new FlowLayout(FlowLayout.LEFT));
-        addWindowListener(new AboutWindowsAdapter(this));
+        this.setResizable(!isAbout);
+
+        setBounds(100, 100, 450, 300);
+        getContentPane().setLayout(new BorderLayout(0, 0));
+
         setUpTextArea(isAbout);
-        setSize(500, 300);
+
+        getContentPane().add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setViewportView(jta);
+
+        jta.setBackground(getBackground());
+        jta.setEditable(false);
+
+//        setLayout(new FlowLayout(FlowLayout.LEFT));
+//        addWindowListener(new AboutWindowsAdapter(this));
+//        setSize(400, 200);
     }
 
     private void setUpTextArea(boolean isAbout) {
@@ -313,22 +334,35 @@ class AboutDialog extends Dialog implements ActionListener {
         }
         else{
             jta = new JTextArea(help_msg);
-            JScrollPane scrollPane = new JScrollPane(jta);
-            scrollPane.setSize(490, 500);
-            scrollPane.setVerticalScrollBar(scrollPane.createVerticalScrollBar());
-            scrollPane.setWheelScrollingEnabled(true);
-            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-            this.add(scrollPane);
+//            jta = new JTextArea("just some testing");
+            scrollPane = new JScrollPane(jta);
+//            scrollPane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL, 30, 20, 0, 500));
+////            scrollPane.setWheelScrollingEnabled(true);
+//            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+//            jta.setSize(300, 150);
+//            scrollPane.setSize(new Dimension(300, 150));
+//            scrollPane.setViewportView(jta);
+//            this.add(scrollPane);
         }
-        jta.setBackground(getBackground());
-        jta.setEditable(false);
-        jta.setLineWrap(true);
-        jta.setWrapStyleWord(true);
-        jta.setSize(490, 500);
+//        jta.setBackground(getBackground());
+//        jta.setEditable(false);
+//        jta.setLineWrap(true);
+//        jta.setWrapStyleWord(true);
+//        scrollPane.getViewport().setMaximumSize(new Dimension(300, 300));
+//        System.out.println(scrollPane.getViewport().isMaximumSizeSet());
+//        JFrame temp = (JFrame) this.getParent();
+//        temp.getContentPane().add(scrollPane, "Center");
     }
 
     public void actionPerformed(ActionEvent ae) {
         dispose();
     }
+
+//    class ScrollBarAdjustment implements AdjustmentListener {
+//        public void adjustmentValueChanged(AdjustmentEvent e) {
+//            label.setText("Slider's position is " + e.getValue());
+//            frame.repaint();
+//        }
+//    }
 }
 

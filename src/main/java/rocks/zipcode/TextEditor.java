@@ -264,15 +264,16 @@ class AboutDialog extends Dialog implements ActionListener {
             "We will save your progress when you click that red close window button...\n" +
             "... unless you CHOOSE to cancel during \"Save As\"... then... well... you know.\n\n" +
             "This help window will stay here as long as you need it to. But please, just play around with the features." +
-            "It's not like you have many more important things to do...";
+            "It's not like you have many more important things to do...\n\n\n\n\n\n\n\n\n Spaghetti";
     JTextArea jta;
 
     AboutDialog(Frame parent, String title, boolean isAbout) {
         super(parent, title, false);
         this.setResizable(false);
-        setLayout(new FlowLayout(FlowLayout.LEFT));
+        setLayout(new FlowLayout(FlowLayout.CENTER));
         addWindowListener(new AboutWindowsAdapter(this));
         setUpTextArea(isAbout);
+
         setSize(500, 300);
     }
 
@@ -284,17 +285,17 @@ class AboutDialog extends Dialog implements ActionListener {
         else{
             jta = new JTextArea(help_msg);
             JScrollPane scrollPane = new JScrollPane(jta);
-            scrollPane.setSize(490, 500);
-            scrollPane.setVerticalScrollBar(scrollPane.createVerticalScrollBar());
-            scrollPane.setWheelScrollingEnabled(true);
-            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+//            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+//            scrollPane.setSize(450,300);
+            scrollPane.createVerticalScrollBar();
             this.add(scrollPane);
+
         }
         jta.setBackground(getBackground());
         jta.setEditable(false);
         jta.setLineWrap(true);
         jta.setWrapStyleWord(true);
-        jta.setSize(490, 500);
+        jta.setSize(450, 300);
     }
 
     public void actionPerformed(ActionEvent ae) {

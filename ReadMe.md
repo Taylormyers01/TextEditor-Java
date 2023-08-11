@@ -11,7 +11,7 @@ Things to add:
 - add a new window, scrollable, with some editor help documentation in it.
 - implement Word Wrap (yeah, look it up)
 - add a font panel, so you can change the font you edit in.
-  - make sure not only new files are in th enew font, but existing windows too.
+  - make sure not only new files are in the new font, but existing windows too.
 - add a way to print the current file.
 - add a way to set the page in portrait or landscape mode
 - Make your About Dialog snazzy!

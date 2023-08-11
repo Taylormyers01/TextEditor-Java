@@ -17,6 +17,8 @@ class TextEditor extends JFrame implements ActionListener {
     String months[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
             "October", "November", "December" };
     CheckboxMenuItem chkb = new CheckboxMenuItem("Word Wrap", true);
+    // i found out this is a C way of making this array but it's handydandy
+    final int[] portraitDimensions = {300, 500};
 
     public TextEditor() {
         MenuBar mb = new MenuBar();
@@ -70,7 +72,7 @@ class TextEditor extends JFrame implements ActionListener {
         chkb.addItemListener(cbil);
         actionPerformed(new ActionEvent(this, 0, "Word Wrap"));
 
-        setSize(500, 500);
+        setSize(300, 500);
         setTitle("untitled notepad");
         setVisible(true);
     }
@@ -155,6 +157,13 @@ class TextEditor extends JFrame implements ActionListener {
         if (arg.equals("Exit")) {
             System.exit(0);
         }
+        if(arg.equals("Page Setup")) {
+            int option = JOptionPane.showConfirmDialog(null, "Portrait or Landscape?",
+                    "Page Setup", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION){
+                setSize(getSize().height, getSize().width);
+            }
+        }
         if (arg.equals("Cut")) {
             str = ta.getSelectedText();
             i = ta.getText().indexOf(str);
@@ -195,7 +204,8 @@ class TextEditor extends JFrame implements ActionListener {
             d1.setVisible(true);
         }
         if(arg.equals("Find")){
-            String stringToFind = JOptionPane.showInputDialog(null, "What would you like to find?", "Find", JOptionPane.INFORMATION_MESSAGE);
+            String stringToFind = JOptionPane.showInputDialog(null, "What would you like to find?",
+                    "Find", JOptionPane.INFORMATION_MESSAGE);
             // i'll get to you one day
 //            Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter( Color.cyan );
 
@@ -204,7 +214,8 @@ class TextEditor extends JFrame implements ActionListener {
             ta.select(offset, offset + length);
         }
         if(arg.equals("Find Next")){
-            String stringToFind = JOptionPane.showInputDialog(null, "What would you like to find next occurrence of?", "Find Next", JOptionPane.INFORMATION_MESSAGE);
+            String stringToFind = JOptionPane.showInputDialog(null,
+                    "What would you like to find next occurrence of?", "Find Next", JOptionPane.INFORMATION_MESSAGE);
             int loc = ta.getCaretPosition();
             int offset = ta.getText().indexOf(stringToFind, loc);
             ta.select(offset, offset + stringToFind.length());

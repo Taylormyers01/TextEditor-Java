@@ -275,8 +275,8 @@ class MyWindowsAdapter extends WindowAdapter {
 }
 
 class AboutDialog extends JDialog implements ActionListener {
-    String about_msg = "Welcome to TextEditor!\n\n" +
-            "Developed by a bunch of talented cats who are passionate about destroying things.";
+    String about_msg = "\n\n\t\t  Welcome to TextEditor!\n\n" +
+            "   Developed by a bunch of talented cats who are passionate about destroying things.";
     String help_msg = "Too dumb for our program? Maybe you're new here? TextEditor is here to help!\n\n" +
            "Most of the buttons are pretty self explanatory.\n\n" +
             "We will save your progress when you click that red close window button...\n" +
@@ -299,8 +299,12 @@ class AboutDialog extends JDialog implements ActionListener {
         super(parent, title, false);
         this.setResizable(!isAbout);
 
-        setBounds(100, 100, 450, 300);
-        getContentPane().setLayout(new BorderLayout(10, 10));
+        if (isAbout) {
+            setBounds(100, 100, 555, 150);
+        } else {
+            setBounds(100, 100, 515, 225);
+        }
+        getContentPane().setLayout(new BorderLayout(0, 0));
 
         setUpTextArea(isAbout);
 
@@ -309,14 +313,8 @@ class AboutDialog extends JDialog implements ActionListener {
     }
 
     private void setUpTextArea(boolean isAbout) {
-        if(isAbout){
-            jta = new JTextArea(about_msg);
-            this.add(jta);
-        }
-        else{
-            jta = new JTextArea(help_msg);
-            scrollPane = new JScrollPane(jta);
-        }
+        jta = isAbout ? new JTextArea(about_msg) : new JTextArea(help_msg);
+        scrollPane = new JScrollPane(jta);
         jta.setBackground(getBackground());
         jta.setEditable(false);
     }

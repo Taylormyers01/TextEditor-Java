@@ -274,18 +274,6 @@ class MyWindowsAdapter extends WindowAdapter {
     }
 }
 
-class AboutWindowsAdapter extends WindowAdapter {
-    AboutDialog ad;
-
-    public AboutWindowsAdapter(AboutDialog add) {
-        ad = add;
-    }
-
-    public void windowClosing(WindowEvent we) {
-        ad.dispose();
-    }
-}
-
 class AboutDialog extends JDialog implements ActionListener {
     String about_msg = "Welcome to TextEditor!\n\n" +
             "Developed by a bunch of talented cats who are passionate about destroying things.";
@@ -312,19 +300,12 @@ class AboutDialog extends JDialog implements ActionListener {
         this.setResizable(!isAbout);
 
         setBounds(100, 100, 450, 300);
-        getContentPane().setLayout(new BorderLayout(0, 0));
+        getContentPane().setLayout(new BorderLayout(10, 10));
 
         setUpTextArea(isAbout);
 
         getContentPane().add(scrollPane, BorderLayout.CENTER);
         scrollPane.setViewportView(jta);
-
-        jta.setBackground(getBackground());
-        jta.setEditable(false);
-
-//        setLayout(new FlowLayout(FlowLayout.LEFT));
-//        addWindowListener(new AboutWindowsAdapter(this));
-//        setSize(400, 200);
     }
 
     private void setUpTextArea(boolean isAbout) {
@@ -334,35 +315,14 @@ class AboutDialog extends JDialog implements ActionListener {
         }
         else{
             jta = new JTextArea(help_msg);
-//            jta = new JTextArea("just some testing");
             scrollPane = new JScrollPane(jta);
-//            scrollPane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL, 30, 20, 0, 500));
-////            scrollPane.setWheelScrollingEnabled(true);
-//            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-//            jta.setSize(300, 150);
-//            scrollPane.setSize(new Dimension(300, 150));
-//            scrollPane.setViewportView(jta);
-//            this.add(scrollPane);
         }
-//        jta.setBackground(getBackground());
-//        jta.setEditable(false);
-//        jta.setLineWrap(true);
-//        jta.setWrapStyleWord(true);
-//        scrollPane.getViewport().setMaximumSize(new Dimension(300, 300));
-//        System.out.println(scrollPane.getViewport().isMaximumSizeSet());
-//        JFrame temp = (JFrame) this.getParent();
-//        temp.getContentPane().add(scrollPane, "Center");
+        jta.setBackground(getBackground());
+        jta.setEditable(false);
     }
 
     public void actionPerformed(ActionEvent ae) {
         dispose();
     }
-
-//    class ScrollBarAdjustment implements AdjustmentListener {
-//        public void adjustmentValueChanged(AdjustmentEvent e) {
-//            label.setText("Slider's position is " + e.getValue());
-//            frame.repaint();
-//        }
-//    }
 }
 

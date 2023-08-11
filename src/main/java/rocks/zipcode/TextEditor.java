@@ -1,6 +1,9 @@
 package rocks.zipcode;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -220,7 +223,7 @@ class TextEditor extends JFrame implements ActionListener {
                     "Find", JOptionPane.INFORMATION_MESSAGE);
             // i'll get to you one day
 //            Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter( Color.cyan );
-            stringToFind = (stringToFind == null) ? "" : stringToFind; 
+            stringToFind = (stringToFind == null) ? "" : stringToFind;
             int offset = ta.getText().indexOf(stringToFind);
             int length = stringToFind.length();
             ta.select(offset, offset + length);
@@ -342,6 +345,9 @@ class AboutDialog extends JDialog implements ActionListener {
         scrollPane = new JScrollPane(jta);
         jta.setBackground(getBackground());
         jta.setEditable(false);
+        jta.setLineWrap(true);
+        jta.setWrapStyleWord(true);
+        jta.setSize(490, 500);
     }
 
     public void actionPerformed(ActionEvent ae) {

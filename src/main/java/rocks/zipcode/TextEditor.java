@@ -1,9 +1,6 @@
 package rocks.zipcode;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -11,7 +8,9 @@ import java.util.*;
 
 //TextEditor class starts here
 class TextEditor extends JFrame implements ActionListener {
+    Boolean portait = true;
     JTextArea ta = new JTextArea();
+    String title = "Untitled Notepad";
     int i, len1, len, pos1;
     String str = "", s3 = "", s2 = "", s4 = "", s32 = "", s6 = "", s7 = "", s8 = "", s9 = "";
     String months[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September",
@@ -73,11 +72,12 @@ class TextEditor extends JFrame implements ActionListener {
         actionPerformed(new ActionEvent(this, 0, "Word Wrap"));
 
         setSize(300, 500);
-        setTitle("untitled notepad");
+        setTitle(title);
         setVisible(true);
     }
 
     public void actionPerformed(ActionEvent ae) {
+
         String arg = (String) ae.getActionCommand();
         if (arg.equals("New")) {
             dispose();
@@ -158,11 +158,23 @@ class TextEditor extends JFrame implements ActionListener {
             System.exit(0);
         }
         if(arg.equals("Page Setup")) {
-            int option = JOptionPane.showConfirmDialog(null, "Portrait or Landscape?",
-                    "Page Setup", JOptionPane.OK_CANCEL_OPTION);
-            if (option == JOptionPane.OK_OPTION){
+            JPanel panel = new JPanel();
+            JRadioButton jrb1 = new JRadioButton("Landscape");
+            JRadioButton jrb2 = new JRadioButton("Portrait");
+            ButtonGroup bg = new ButtonGroup();
+            bg.add(jrb1);bg.add(jrb2);
+            panel.add(jrb2);panel.add(jrb1);
+            JOptionPane.showMessageDialog(null, panel, "Select Layout", JOptionPane.QUESTION_MESSAGE);
+            if(jrb1.isSelected() && portait){
+                portait = false;
+                setSize(getSize().height, getSize().width);
+            }else if(jrb2.isSelected() && !portait){
+                portait = true;
                 setSize(getSize().height, getSize().width);
             }
+
+//                setSize(getSize().height, getSize().width);
+
         }
         if (arg.equals("Cut")) {
             str = ta.getSelectedText();
@@ -208,10 +220,11 @@ class TextEditor extends JFrame implements ActionListener {
                     "Find", JOptionPane.INFORMATION_MESSAGE);
             // i'll get to you one day
 //            Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter( Color.cyan );
-
+            stringToFind = (stringToFind == null) ? "" : stringToFind; 
             int offset = ta.getText().indexOf(stringToFind);
             int length = stringToFind.length();
             ta.select(offset, offset + length);
+
         }
         if(arg.equals("Find Next")){
             String stringToFind = JOptionPane.showInputDialog(null,
@@ -251,6 +264,7 @@ class TextEditor extends JFrame implements ActionListener {
             // Question message shows our lil mascot dude :)
             ta.setFont(new Font((String)comboBox.getSelectedItem(), Font.PLAIN, 14));
         }
+        setTitle(title);
     }
 
     public static void main(String args[]) {

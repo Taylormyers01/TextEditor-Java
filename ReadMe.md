@@ -15,3 +15,5 @@ Things to add:
 - add a way to print the current file.
 - add a way to set the page in portrait or landscape mode
 - Make your About Dialog snazzy!
+
+This text editor is kinda lit
